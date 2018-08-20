@@ -1,10 +1,14 @@
 # file: roles/httpd/tasks/configure.yml
 
-- name: Change default apache vhost
+- name: Setup example.com configuration in apache (centos 7)
+  # template: src=default.tpl dest=/etc/httpd/conf.d/example.com.conf
   template: src=default.tpl dest=/etc/httpd/conf.d/000-default.conf
 
 - name: Set global ServerName for apache config
   lineinfile: dest=/etc/httpd/conf/httpd.conf line="ServerName localhost"
+
+# - name: Set sites enabled in apache configuration (centos 7)
+#   lineinfile: dest=/etc/httpd/conf/httpd.conf line="IncludeOptional sites-enabled/*.conf"
 
 - name: SELinux to enforcing
   command: /sbin/setenforce 0

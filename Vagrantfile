@@ -2,9 +2,7 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.box = "centos/7"
-    web01.vm.hostname = "webservers"
-    web01.ssh.forward_agent = true
-    web01.ssh.port = 2222
+    config.vm.hostname = "web"
 
     config.vm.network :forwarded_port, host: 80, guest: 80, auto_correct: true # website
     config.vm.network :forwarded_port, guest: 443, host: 443, auto_correct: true # ssl
@@ -14,7 +12,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.synced_folder "./", "/var/www/html", type: "rsync", id: "vagrant", :nfs => false,
         :mount_options => ["dmode=777", "fmode=666"]
 
-    config.vm.provider "webservers" do |vb|
+    config.vm.provider "web" do |vb|
         vb.gui = false
         vb.customize ['modifyvm', :id, '--memory', '1024']
         vb.customize ["modifyvm", :id, "--cpus", "1"]
