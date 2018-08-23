@@ -3,5 +3,6 @@
 
 httpd_port: 80
 ntpserver: 192.168.1.2
+example_root: /var/www/example.com
 # repository: (the repositories from bitbucket or github that you want int he
 # development environment)

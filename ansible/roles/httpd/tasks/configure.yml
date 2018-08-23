@@ -1,14 +1,35 @@
 # file: roles/httpd/tasks/configure.yml
+# TODO will proboably make a separate configuration role for each
+# website
 
 - name: Setup example.com configuration in apache (centos 7)
-  # template: src=default.tpl dest=/etc/httpd/conf.d/example.com.conf
+  template: src=example.com.tpl dest=/etc/httpd/sites-available/example.com.conf
+
+- name: Setup default configuration in apache (centos 7)
   template: src=default.tpl dest=/etc/httpd/conf.d/000-default.conf
 
-- name: Set global ServerName for apache config
-  lineinfile: dest=/etc/httpd/conf/httpd.conf line="ServerName localhost"
+# - name: Set global ServerName for apache config
+#   lineinfile: dest=/etc/httpd/conf/httpd.conf line="ServerName localhost"
 
-# - name: Set sites enabled in apache configuration (centos 7)
-#   lineinfile: dest=/etc/httpd/conf/httpd.conf line="IncludeOptional sites-enabled/*.conf"
+- name: Set sites enabled in apache configuration (centos 7)
+  lineinfile: dest=/etc/httpd/conf/httpd.conf line="IncludeOptional sites-enabled/*.conf"
+
+- name: Creates sites available example website
+  file: path=/etc/httpd/sites-available state=directory
+
+- name: Creates sites enabled example website
+  file: path=/etc/httpd/sites-enabled state=directory
+
+- file:
+    src: '/etc/httpd/sites-available/example.com.conf'
+    dest: '/etc/httpd/sites-enabled/example.com.conf'
+    state: link
+
+- name: Create example.com custom document root
+  file: path={{ example_root }} state=directory owner=www-data group=www-data
+
+- name: Set up example.com HTML file
+  copy: src=example.com/index.html dest={{ example_root }}/index.html owner=www-data group=www-data mode=0644
 
 - name: SELinux to enforcing
   command: /sbin/setenforce 0
