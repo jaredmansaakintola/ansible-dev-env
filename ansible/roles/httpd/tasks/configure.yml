@@ -2,11 +2,11 @@
 # TODO will proboably make a separate configuration role for each
 # website
 
-- name: Setup default configuration in apache (centos 7)
-  template: src=default.tpl dest=/etc/httpd/conf.d/000-default.conf
+# - name: Setup default configuration in apache (centos 7)
+#   template: src=default.tpl dest=/etc/httpd/conf.d/000-default.conf
 
-# - name: Set global ServerName for apache config
-#   lineinfile: dest=/etc/httpd/conf/httpd.conf line="ServerName localhost"
+- name: Set global ServerName for apache config
+  lineinfile: dest=/etc/httpd/conf/httpd.conf line="ServerName examples"
 
 - name: Set sites enabled in apache configuration (centos 7)
   lineinfile: dest=/etc/httpd/conf/httpd.conf line="\nIncludeOptional sites-enabled/*.conf"
@@ -24,12 +24,17 @@
   file: path=/etc/httpd/sites-enabled state=directory
 
 - name: Setup example.com configuration in apache (centos 7)
-  template: src={{ domain }}.tpl dest=/etc/httpd/sites-available/{{ domain }}.conf
+  template: src=example.com.tpl dest=/etc/httpd/sites-available/{{ domain }}.conf
 
-- file:
-    src: '/etc/httpd/sites-available/{{ domain }}.conf'
-    dest: '/etc/httpd/sites-enabled/{{ domain }}.conf'
-    state: link
+- name: Setup example.com configuration in apache (centos 7)
+  template: src=example.com.tpl dest=/etc/httpd/sites-enabled/{{ domain }}.conf
+# - file:
+#     src: '/etc/httpd/sites-available/{{ domain }}.conf'
+#     dest: '/etc/httpd/sites-enabled/{{ domain }}.conf'
+#     state: link
+
+# - name: Create example.com custom document root
+#   file: path={{ domain_root }} state=directory owner=www-data group=www-data
 
 # - name: Create example.com custom document root
 #   file: path={{ domain_root }} state=directory owner=www-data group=www-data
@@ -44,3 +49,6 @@
 
 - name: Ensure Apache running
   service: name=httpd state=started enabled=yes
+
+- name: Set hosts
+  lineinfile: dest=/etc/hosts line="10.0.0.10 example.com"

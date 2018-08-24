@@ -9,7 +9,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.network :forwarded_port, guest: 3306, host: 3306, auto_correct: true # mysql
     config.vm.network :forwarded_port, guest: 9000, host: 9000, auto_correct: true # phpmyadmin
     config.vm.network :private_network, ip: "10.0.0.10"
-    config.vm.synced_folder "./", "/var/www/", type: "rsync", id: "vagrant", :nfs => false,
+    config.vm.synced_folder "./", "/var/www/html/", type: "rsync", id: "vagrant", :nfs => false,
         :mount_options => ["dmode=777", "fmode=666"]
 
     config.vm.provider "web" do |vb|
