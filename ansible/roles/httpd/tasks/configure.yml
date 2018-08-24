@@ -1,9 +1,11 @@
 # file: roles/httpd/tasks/configure.yml
 # TODO will proboably make a separate configuration role for each
 # website
-
 # - name: Setup default configuration in apache (centos 7)
-#   template: src=default.tpl dest=/etc/httpd/conf.d/000-default.conf
+#   template: src={{ domain }}.tpl dest=/etc/httpd/conf.d/000-default.conf
+
+- name: Setup vhost configuration in apache (centos 7)
+  template: src={{ domain }}.tpl dest=/etc/httpd/conf.d/{{ domain }}.conf
 
 - name: Set global ServerName for apache config
   lineinfile: dest=/etc/httpd/conf/httpd.conf line="ServerName examples"
@@ -12,32 +14,42 @@
   lineinfile: dest=/etc/httpd/conf/httpd.conf line="\nIncludeOptional sites-enabled/*.conf"
 
 - name: Set sites enabled in apache configuration (centos 7)
-  lineinfile: dest=/etc/httpd/conf.d/000-default.conf regexp="^<VirtualHost \*:" line="<VirtualHost *:{{ httpd_port }}>"
+  lineinfile: dest=/etc/httpd/conf.d/{{ domain }}.conf regexp="^<VirtualHost \*:" line="<VirtualHost *:{{ httpd_port }}>"
 
 - name: Set sites enabled in apache configuration (centos 7)
   lineinfile: dest=/etc/httpd/conf/httpd.conf regexp="^Listen " line="Listen {{ httpd_port }}" state=present
 
-- name: Creates sites available example website
-  file: path=/etc/httpd/sites-available state=directory
+# - name: Creates sites available example website
+#   file: path=/etc/httpd/sites-available state=directory
 
-- name: Creates sites enabled example website
-  file: path=/etc/httpd/sites-enabled state=directory
+# - name: Creates sites enabled example website
+#   file: path=/etc/httpd/sites-enabled state=directory
 
-- name: Setup example.com configuration in apache (centos 7)
-  template: src=example.com.tpl dest=/etc/httpd/sites-available/{{ domain }}.conf
+# Have this configuration toggle based on enviuronemnt to allow for both
+# centos and ubuntu
+# - name: Setup example.com configuration in apache (ubuntu)
+#   template: src=example.com.tpl dest=/etc/httpd/sites-available/{{ domain }}.conf
 
-- name: Setup example.com configuration in apache (centos 7)
-  template: src=example.com.tpl dest=/etc/httpd/sites-enabled/{{ domain }}.conf
+# - name: Setup example.com configuration in apache (ubuntu)
+#   template: src=example.com.tpl dest=/etc/httpd/sites-enabled/{{ domain }}.conf
 # - file:
 #     src: '/etc/httpd/sites-available/{{ domain }}.conf'
 #     dest: '/etc/httpd/sites-enabled/{{ domain }}.conf'
 #     state: link
 
+# CENTOS (apache user)
 # - name: Create example.com custom document root
-#   file: path={{ domain_root }} state=directory owner=www-data group=www-data
+#   file: path={{ domain_root }} state=directory owner=apache group=apache
 
 # - name: Create example.com custom document root
-#   file: path={{ domain_root }} state=directory owner=www-data group=www-data
+#   file: path={{ domain_root }} state=directory owner=apache group=apache
+
+# Ubuntu (www-data user)
+# - name: Create example.com custom document root
+#   file: path={{ domain_root }} state=directory owner=apache group=apache
+
+# - name: Create example.com custom document root
+#   file: path={{ domain_root }} state=directory owner=apache group=apache
 
 # - name: Set up example.com HTML file
 #   copy: src=example.com/index.html dest={{ domain_root }}/{{ domain }}/index.html owner=www-data group=www-data mode=0644
