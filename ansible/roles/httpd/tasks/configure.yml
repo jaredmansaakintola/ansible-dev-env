@@ -10,11 +10,17 @@
 - name: Set global ServerName for apache config
   lineinfile: dest=/etc/httpd/conf/httpd.conf line="ServerName examples"
 
-- name: Set sites enabled in apache configuration (centos 7)
-  lineinfile: dest=/etc/httpd/conf/httpd.conf line="\nIncludeOptional sites-enabled/*.conf"
+# - name: Clean html folder
+#   file:
+#     state: absent
+#     path: {{ domain_root }}"html"
 
-- name: Set sites enabled in apache configuration (centos 7)
-  lineinfile: dest=/etc/httpd/conf.d/{{ domain }}.conf regexp="^<VirtualHost \*:" line="<VirtualHost *:{{ httpd_port }}>"
+# - name: Set sites enabled in apache configuration (centos 7 to behave
+# like ubuntu)
+#   lineinfile: dest=/etc/httpd/conf/httpd.conf line="\nIncludeOptional sites-enabled/*.conf"
+
+# - name: Set sites enabled in apache configuration (centos 7)
+#   lineinfile: dest=/etc/httpd/conf.d/{{ domain }}.conf regexp="^<VirtualHost \*:" line="<VirtualHost *:{{ httpd_port }}>"
 
 - name: Set sites enabled in apache configuration (centos 7)
   lineinfile: dest=/etc/httpd/conf/httpd.conf regexp="^Listen " line="Listen {{ httpd_port }}" state=present
