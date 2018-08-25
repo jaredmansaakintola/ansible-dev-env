@@ -1,0 +1,12 @@
+- name: Update cow-clicker web app
+  hosts: clickera, clickerb
+  tasks:
+    - name: rsync app files to /srv
+      synchronize:
+        mode: pull
+        src: web-repo:~sites/cow-clicker
+        dest: /srv/cow-clicker
+        notify: restart nginx
+  handlers:
+    - name: restart nginx
+      service: name=nginx state=restarted
